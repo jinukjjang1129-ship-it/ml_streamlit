@@ -1,35 +1,29 @@
-# OCV 저전압 불량 분류 대시보드
+# OCV 분류 Streamlit 실습 앱
 
-엑셀(OCV 측정 데이터)을 올리면 OK/NG를 분류하는 Streamlit 앱입니다.
-**OCV1~3(사전 예측)** 과 **OCV1~4(측정 후)** 를 버튼으로 비교해,
-불량을 언제부터 잡을 수 있는지 보여줍니다.
+Excel로 입력한 OCV 측정값으로 분류 모델을 학습하고, 임곗값에 따른 미검출·과검을 살펴보는 실습용 대시보드입니다.
 
 ## 기능
-- 엑셀 업로드 (헤더 행 조정 가능)
-- 컬럼 자동 인식 + 수동 지정
-- 입력 변수 시나리오 토글: OCV1~3 vs OCV1~4
-- 결과: 오검/과검/recall/precision, 혼동행렬, 변수 중요도
-- OCV3 vs OCV4 산점도
-- 임계값에 따른 오검↔과검 트레이드오프 표
 
-## 로컬에서 실행
+- Excel 헤더·입력 컬럼 선택
+- OCV1~3 입력과 OCV1~4 입력 비교
+- GradientBoostingClassifier 학습과 Precision·Recall·혼동행렬 표시
+- 변수 중요도, OCV3/OCV4 산점도, 임곗값별 결과 확인
+
+OCV4가 정답 판정 기준인 데이터에서는 OCV4 포함 결과를 **사전 예측 성능으로 사용할 수 없습니다.** 이 저장소는 입력·시각화·임곗값 실습을 보존하는 용도입니다. 다른 모델과의 우열이나 배포 안정성은 별도 비교 실험 없이 주장하지 않습니다.
+
+## 실행
+
 ```bash
+python -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
 streamlit run app.py
 ```
-브라우저에서 http://localhost:8501 로 열립니다. (본인 PC에서만 보임)
 
-## 인터넷 링크로 공유하기 (Streamlit Community Cloud, 무료)
+사용 권한이 있는 Excel을 준비하고 실제 헤더 위치를 지정합니다. 원문 제조 데이터나 업로드 파일을 저장소에 공개하지 않습니다. 공개 서비스에 비공개 업무 데이터를 업로드하는 방식은 이 프로젝트의 제출 범위에 포함하지 않습니다.
 
-1. 이 파일들(`app.py`, `requirements.txt`, `packages.txt`, `README.md`)을
-   GitHub 저장소(repository)에 올립니다.
-2. https://share.streamlit.io 에 접속해 GitHub 계정으로 로그인합니다.
-3. **"New app"** → 저장소(repo)와 브랜치 선택, Main file path에 `app.py` 입력.
-4. **Deploy** 클릭. 잠시 후 `https://<앱이름>.streamlit.app` 링크가 생깁니다.
-5. 이 링크를 카톡으로 보내면 누구나 브라우저로 열어 자기 엑셀을 올려볼 수 있습니다.
+## 검증용 프로젝트와 관계
 
-## 참고
-- 모델은 sklearn `GradientBoostingClassifier`를 사용합니다
-  (xgboost와 성능이 비슷하면서 배포가 더 안정적입니다).
-- 한글 폰트는 `packages.txt`의 `fonts-nanum`으로 클라우드에 자동 설치됩니다.
-- 엑셀 헤더가 2번째 행에 있으면 앱에서 "헤더 행 번호"를 1로 두세요.
+생산일/그룹 분할, 학습 내부 전처리, 4개 모델 비교, 평가셋과 검증셋 분리는 [OCV 검증 변경](https://github.com/jinukjjang1129-ship-it/ocv__/pull/1)에서 별도로 다룹니다. 제출용 `battery-ocv-classification`은 해당 검증 코드를 선별한 신규 저장소로 준비 중입니다.
+
+기존 업무 성과의 원자료는 비공개이며, 제공된 강의용 샘플과 같은 데이터인지 확인되지 않아 직접 재현 검증은 보류합니다. 이번 README 정리를 새로운 모델 성능 검증으로 표시하지 않습니다.
